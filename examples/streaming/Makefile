@@ -33,6 +33,9 @@ streaming_lib:
 	mvn install -f ../../java/pom.xml
 	mv ../../java/target/hadoop-streaming-protoseq-0.0.1.jar mapreduce/hadoop-streaming-protoseq.jar
 	touch streaming_lib
+	
+streaming_lib_remove:
+	rm streaming_lib || true
 
 clean: pyenv_remove proto_remove
 	rm -r target python java || true
