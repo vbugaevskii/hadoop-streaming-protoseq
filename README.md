@@ -1,16 +1,16 @@
 # ProtoSeq
 
-ProtoSeq is a python library that alows working with sequences of specified protobuf messages. The sequence of protobuf messages is stored as sequence of pairs:
+ProtoSeq is a python library that alows working with sequences of specified protobuf messages. The sequence of protobuf messages is stored as a sequence of pairs:
 * size of message in bytes - 4 bytes (int);
 * protobuf message bytes.
 
-This is a flexible storage format that allows to process sequnce with multiprocessing (e.g. with Hadoop) if extra index file is provided.
+This sequence format is a flexible storage format similar to [Hadoop SequenceFile](https://hadoop.apache.org/docs/current/api/org/apache/hadoop/io/SequenceFile.html) that allows to process files with multiprocessing (e.g. with Hadoop) if extra index is provided.
 
-Unlike popular [Hadoop SequenceFile](https://hadoop.apache.org/docs/current/api/org/apache/hadoop/io/SequenceFile.html) format, ProtoSeq doesn't store meta info inside data files, so it can easily be ported to any programming language. 
+This repository is an example how to work with binary data using Hadoop Streaming.
 
 ## Quick start
 
-Install package with pip: `pip install protogen`.
+Install package with pip: `pip install protoseq`.
 
 This is an example program that reads file in protoseq format, saves it to temprorary file and prints protobufs in human readable format.
 
@@ -44,34 +44,31 @@ Here `record` is an instance of `address_pb2.Address`.
 
 This program needs an `address_pb2.py` file – [generated sources](https://developers.google.com/protocol-buffers/docs/pythontutorial#compiling-your-protocol-buffers) for python. `address_pb2.py` can be changed to your own protobuf.
 
-## Hadoop Streaming
-
-As it was discussed earliear ProtoSeq format is supposed to be used as an alternative to Hadoop SequenceFile format. ProtoSeq has a python [hadoop streaming](https://hadoop.apache.org/docs/stable/hadoop-streaming/HadoopStreaming.html) support.
+## Hadoop Streaming Example
 
 Here is an example of Map-Reduce program (map-only) that copies a file in HDFS.
 
-There are some dependencies for MR job:
+There are some dependencies we need to run the MR job:
 
 ```bash
-$ tree
-.
-├── address-pb2.jar
-├── hadoop-streaming-protobuf.jar
+$ tree mapreduce
+mapreduce
+├── hadoop-streaming-protoseq.jar
 ├── streaming
 │   ├── address_pb2.py
 │   └── mapper.py
 └── streaming-env-py37.tar.gz
 
 1 directory, 5 files
-```
+``` 
 
-* `address_pb2.jar` – [compiled version](https://developers.google.com/protocol-buffers/docs/javatutorial#compiling-your-protocol-buffers) of protobuf classes for java;
+You can get all these files just running `make all` command inside [example directory](examples/streaming):
 * `hadoop-streaming-protoseq.jar` – ProtoSeq library for Hadoop Streaming;
-* `streaming-env-py37.tar.gz` – environment with python3 and intalled ProtoSeq package;
+* `streaming-env-py37.tar.gz` – environment with python3 and installed ProtoSeq package;
 * `streaming/mapper.py` – mapper stage for job;
 * `streaming/address_pb2.py` – generated protobuf sources for python.
 
-Mapper can look this way:
+[Mapper](examples/streaming/mapper.py) can look this way:
 
 ```python
 #!/usr/bin/env python
@@ -102,21 +99,17 @@ To run MR program we need to excute command:
 ${HADOOP} jar ${HADOOP_STREAMING} \
     -D mapred.job.name="Example: Copy proto file" \
     -D mapred.reduce.tasks=0 \
-    -D stream.map.protoseq.class='address_pb2.Address' \
     -D stream.map.input='rawbytes' \
     -D stream.map.input.writer.class='org.apache.hadoop.streaming.io.RawBytesOutputReader' \
     -D stream.map.output='rawbytes' \
     -D stream.map.output.reader.class='org.apache.hadoop.streaming.io.RawBytesOutputReader' \
     -files "streaming/mapper.py" \
-    -libjars "hadoop-streaming-protoseq.jar,address_pb2.jar" \
+    -libjars "hadoop-streaming-protoseq.jar=" \
     -archives "streaming-env-py37.tar.gz#env" \
-    -inputformat "com.github.vbugaevskii.hadoop.streaming.protobuf.ProtobufSequenceInputFormat" \
+    -inputformat  "com.github.vbugaevskii.hadoop.streaming.protobuf.ProtobufSequenceInputFormat" \
     -outputformat "com.github.vbugaevskii.hadoop.streaming.protobuf.ProtobufSequenceOutputFormat" \
     -mapper "env/bin/python streaming/mapper.py" \
     -input  "/tmp/v.bugaevskii/addresses.protoseq" \
     -output "/tmp/v.bugaevskii/protoseq_copy"
 ```
 
-Parameter `stream.map.protoseq.class` specifies protobuf class, that is stored in input file `addresses.protoseq`.
-
-Full example project can be found here.
