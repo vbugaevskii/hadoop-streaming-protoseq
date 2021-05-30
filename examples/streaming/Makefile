@@ -1,4 +1,4 @@
-all: setup proto pyenv
+all: setup proto pyenv streaming_lib
 
 setup:
 	mkdir -p mapreduce/streaming
@@ -28,6 +28,11 @@ pyenv_remove:
 pyenv: pyenv_create
 	rm mapreduce/streaming-env-py37.tar.gz || true
 	conda pack -n streaming-env-py37 -o mapreduce/streaming-env-py37.tar.gz
+
+streaming_lib:
+	mvn install -f ../../java/pom.xml
+	mv ../../java/target/hadoop-streaming-protoseq-0.0.1.jar mapreduce/hadoop-streaming-protoseq.jar
+	touch streaming_lib
 
 clean: pyenv_remove proto_remove
 	rm -r target python java || true
