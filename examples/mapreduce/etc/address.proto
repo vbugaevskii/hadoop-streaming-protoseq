@@ -1,0 +1,12 @@
+syntax = "proto2";
+
+package address.pb;
+
+message Address {
+    required int32  index    = 1;
+    optional string country  = 2;
+    optional string region   = 3;
+    optional string city     = 4;
+    optional string street   = 5;
+    optional string building = 6;
+}
