@@ -1,7 +1,7 @@
 # ProtoSeq
 
 ProtoSeq is a python library that alows working with sequences of specified protobuf messages. The sequence of protobuf messages is stored as a sequence of pairs:
-* size of message in bytes - 4 bytes (int);
+* size of message in bytes – 4 bytes (int);
 * protobuf message bytes.
 
 This sequence format is a flexible storage format similar to [Hadoop SequenceFile](https://hadoop.apache.org/docs/current/api/org/apache/hadoop/io/SequenceFile.html) that allows to process files with multiprocessing (e.g. with Hadoop) if extra index is provided.
@@ -68,6 +68,8 @@ You can get all these files just running `make all` command inside [example dire
 * `streaming/mapper.py` – mapper stage for job;
 * `streaming/address_pb2.py` – generated protobuf sources for python.
 
+You supposed to have [conda](https://conda.io/projects/conda/en/latest/index.html) and [conda pack](https://conda.github.io/conda-pack/) to prepare `streaming-env-py37.tar.gz` for streaming.
+
 [Mapper](examples/streaming/mapper.py) can look this way:
 
 ```python
@@ -93,7 +95,7 @@ if __name__ == "__main__":
     mapper()
 ```
 
-To run MR program we need to excute command:
+To run MR program we need to execute command:
 
 ```bash
 ${HADOOP} jar ${HADOOP_STREAMING} \
@@ -104,7 +106,7 @@ ${HADOOP} jar ${HADOOP_STREAMING} \
     -D stream.map.output='rawbytes' \
     -D stream.map.output.reader.class='org.apache.hadoop.streaming.io.RawBytesOutputReader' \
     -files "streaming/mapper.py" \
-    -libjars "hadoop-streaming-protoseq.jar=" \
+    -libjars "hadoop-streaming-protoseq.jar" \
     -archives "streaming-env-py37.tar.gz#env" \
     -inputformat  "com.github.vbugaevskii.hadoop.streaming.protobuf.ProtobufSequenceInputFormat" \
     -outputformat "com.github.vbugaevskii.hadoop.streaming.protobuf.ProtobufSequenceOutputFormat" \
