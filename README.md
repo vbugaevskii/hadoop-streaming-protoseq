@@ -10,7 +10,7 @@ This repository is an example how to work with binary data using Hadoop Streamin
 
 ## Quick Start
 
-Install package with pip: `pip install protoseq`.
+Install package with pip: `pip install hadoop-protoseq`.
 
 This is an example program that reads file in protoseq format, saves it to temprorary file and prints protobufs in human readable format.
 
