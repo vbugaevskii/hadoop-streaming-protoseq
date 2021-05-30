@@ -37,7 +37,7 @@ streaming_lib:
 streaming_lib_remove:
 	rm streaming_lib || true
 
-clean: pyenv_remove proto_remove
+clean: pyenv_remove proto_remove streaming_lib_remove
 	rm -r target python java || true
 	rm streaming-env-py37.tar.gz || true
 	rm -r mapreduce || true
