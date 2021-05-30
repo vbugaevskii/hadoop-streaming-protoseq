@@ -8,7 +8,7 @@ This sequence format is a flexible storage format similar to [Hadoop SequenceFil
 
 This repository is an example how to work with binary data using Hadoop Streaming.
 
-## Quick start
+## Quick Start
 
 Install package with pip: `pip install protoseq`.
 
