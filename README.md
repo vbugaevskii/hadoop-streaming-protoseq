@@ -1,6 +1,6 @@
 # ProtoSeq
 
-ProtoSeq is a python library that alows working with sequences of specified protobuf messages. The sequence of protobuf messages is stored as a sequence of pairs:
+ProtoSeq is a python library that allows working with sequences of specified protobuf messages. The sequence of protobuf messages is stored as a sequence of pairs:
 * size of message in bytes – 4 bytes (int);
 * protobuf message bytes.
 
