@@ -7,7 +7,7 @@ with open("requirements.txt", "r") as fh:
     requirements = fh.readline()
 
 setuptools.setup(
-    name='protoseq',
+    name='hadoop-protoseq',
     version='0.0.1',
     description='Python library for Hadoop Streaming with support of protobuf sequences',
     long_description=long_description,
